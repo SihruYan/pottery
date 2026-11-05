@@ -4,7 +4,6 @@ export interface FortuneBubbles {
   dragFail: string;
   openTap: string;
   openDrag: string;
-  openShake: string;
 }
 
 export interface PageCopy {
@@ -13,12 +12,10 @@ export interface PageCopy {
   hints: string[];
   openHint: string;
   bubbles: FortuneBubbles;
-  shake: string;
   again: string;
   copy: string;
   copied: string;
   copyFailed: string;
-  shakeDenied: string;
   emptyFortunes: string;
   todayCount: string;
   slipDate: string;

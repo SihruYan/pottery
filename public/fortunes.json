@@ -14,15 +14,12 @@
       "tap2": "好啦，要裂了",
       "dragFail": "再用一點點力",
       "openTap": "咔啦——",
-      "openDrag": "掰開囉",
-      "openShake": "搖醒了啦"
+      "openDrag": "掰開囉"
     },
-    "shake": "搖一搖也會醒",
     "again": "再掰一塊",
     "copy": "抄下來",
     "copied": "抄好了，貼到哪裡都甜甜的",
     "copyFailed": "沒抄成功，可以長按文字選取",
-    "shakeDenied": "沒拿到搖動權限，這次就直接掰開",
     "emptyFortunes": "籤文是空的，先到 fortunes.json 加一點",
     "todayCount": "今天 {n} 塊",
     "slipDate": "{date}的小籤",

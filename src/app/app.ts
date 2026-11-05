@@ -6,7 +6,7 @@ import { PageCopy } from './fortune.models';
 import { FortuneService } from './fortune.service';
 
 type Phase = 'idle' | 'opening' | 'open' | 'closing';
-type OpenSource = 'tap' | 'drag' | 'shake';
+type OpenSource = 'tap' | 'drag';
 
 @Component({
   selector: 'app-root',
@@ -30,10 +30,6 @@ export class App implements OnDestroy {
   private moved = 0;
   private suppressClick = false;
   private memoryCount = 0;
-  private motionReady = false;
-  private motionHits = 0;
-  private motionTimer = 0;
-  private lastMotion = { x: 0, y: 0, z: 0 };
 
   protected readonly copy = signal<PageCopy | null>(null);
   protected readonly loadError = signal(false);
@@ -43,7 +39,6 @@ export class App implements OnDestroy {
   protected readonly forceCrack = signal(false);
   protected readonly pulling = signal(false);
   protected readonly squish = signal(false);
-  protected readonly dizzy = signal(false);
   protected readonly trembling = signal(false);
   protected readonly muted = signal(readMuted());
   protected readonly count = signal(this.readCount());
@@ -92,8 +87,6 @@ export class App implements OnDestroy {
     this.loadSub?.unsubscribe();
     this.timers.forEach((id) => window.clearTimeout(id));
     window.clearTimeout(this.toastTimer);
-    window.clearTimeout(this.motionTimer);
-    window.removeEventListener('devicemotion', this.onMotion);
   }
 
   protected onPointerDown(event: PointerEvent): void {
@@ -155,11 +148,6 @@ export class App implements OnDestroy {
       return;
     }
     this.onTap();
-  }
-
-  protected onShake(): void {
-    if (this.phase() !== 'idle') return;
-    void this.enableShake();
   }
 
   protected closeCookie(): void {
@@ -227,15 +215,9 @@ export class App implements OnDestroy {
     }
     this.phase.set('opening');
     this.forceCrack.set(true);
-    this.squish.set(source !== 'shake');
-    this.dizzy.set(source === 'shake');
+    this.squish.set(true);
     this.trembling.set(false);
-    const line =
-      source === 'shake'
-        ? copy.bubbles.openShake
-        : source === 'drag'
-          ? copy.bubbles.openDrag
-          : copy.bubbles.openTap;
+    const line = source === 'drag' ? copy.bubbles.openDrag : copy.bubbles.openTap;
     this.showBubble(line);
     this.audio.playOpen(this.muted());
     this.vibrate([14, 36, 20]);
@@ -244,9 +226,8 @@ export class App implements OnDestroy {
     this.writeCount(nextCount);
     this.count.set(nextCount);
     this.burst();
-    this.later(source === 'shake' ? 430 : 190, () => {
+    this.later(190, () => {
       this.squish.set(false);
-      this.dizzy.set(false);
       this.isOpen.set(true);
       this.split.set('0');
       this.taps.set(3);
@@ -254,52 +235,6 @@ export class App implements OnDestroy {
       this.later(700, () => this.phase.set('open'));
     });
   }
-
-  private async enableShake(): Promise<void> {
-    const ctor = DeviceMotionEvent as unknown as {
-      requestPermission?: () => Promise<string>;
-    };
-    if (typeof ctor.requestPermission === 'function') {
-      try {
-        const result = await ctor.requestPermission();
-        if (result !== 'granted') this.toast(this.copy()?.shakeDenied ?? '');
-      } catch {
-        /* still open the cookie */
-      }
-    }
-    this.listenForShake();
-    this.openCookie('shake');
-  }
-
-  private listenForShake(): void {
-    if (this.motionReady) return;
-    window.addEventListener('devicemotion', this.onMotion);
-    this.motionReady = true;
-  }
-
-  private readonly onMotion = (event: DeviceMotionEvent): void => {
-    if (this.phase() !== 'idle') return;
-    const acc = event.accelerationIncludingGravity ?? event.acceleration;
-    if (!acc) return;
-    const x = acc.x ?? 0;
-    const y = acc.y ?? 0;
-    const z = acc.z ?? 0;
-    const delta =
-      Math.abs(x - this.lastMotion.x) +
-      Math.abs(y - this.lastMotion.y) +
-      Math.abs(z - this.lastMotion.z);
-    this.lastMotion = { x, y, z };
-    if (delta < 28) return;
-    this.motionHits += 1;
-    window.clearTimeout(this.motionTimer);
-    this.motionTimer = window.setTimeout(() => {
-      this.motionHits = 0;
-    }, 420);
-    if (this.motionHits >= 2) {
-      this.motionHits = 0;
-      this.openCookie('shake');
-    }
-  };
 
   private showBubble(text: string): void {
     if (!text) return;
