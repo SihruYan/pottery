@@ -1,0 +1,261 @@
+<ul class="motes" aria-hidden="true">
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>
+
+@if (copy(); as copy) {
+  <main
+    class="app"
+    [class.awake]="taps() >= 1"
+    [class.crack]="taps() >= 2 || forceCrack()"
+    [class.is-open]="isOpen()"
+    [class.is-muted]="muted()"
+    [class.is-squish]="squish()"
+    [class.is-dizzy]="dizzy()"
+    [class.tremble]="trembling()"
+    [attr.data-taps]="taps()"
+  >
+    <header class="top">
+      <div>
+        <p class="eyebrow">{{ copy.eyebrow }}</p>
+        <h1>{{ copy.title }}</h1>
+      </div>
+      <div class="top-tools">
+        @if (count() > 0) {
+          <p class="count">{{ countText() }}</p>
+        }
+        <button
+          class="icon-btn"
+          type="button"
+          [attr.aria-pressed]="muted()"
+          [attr.aria-label]="muted() ? copy.muteOff : copy.muteOn"
+          (click)="toggleMute()"
+        >
+          <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 10v4h3l4 3V7L7 10H4z" fill="currentColor" />
+            <path
+              d="M16 9.2a4 4 0 0 1 0 5.6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M18.2 7a7 7 0 0 1 0 10"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+          <svg class="icon-off" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 10v4h3l4 3V7L7 10H4z" fill="currentColor" />
+            <path
+              d="M16 10l4 4M20 10l-4 4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="stage" [style.--split]="split()">
+      <div class="halo" aria-hidden="true"></div>
+      <div class="plate" aria-hidden="true"></div>
+
+      <article class="paper" [attr.aria-hidden]="isOpen() ? null : 'true'">
+        <div class="paper-head">
+          <p class="paper-date">{{ slipDate() }}</p>
+          <div class="seal" aria-hidden="true"><span>{{ copy.seal }}</span></div>
+        </div>
+        <p class="fortune-text">{{ fortune() }}</p>
+      </article>
+
+      <button
+        class="cookie-btn"
+        [class.idle-float]="idleFloat()"
+        type="button"
+        [attr.aria-label]="copy.cookieLabel"
+        [style.--look-x]="lookX()"
+        [style.--look-y]="lookY()"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerUp($event)"
+        (pointercancel)="onPointerCancel($event)"
+        (click)="onClick($event)"
+      >
+        <span class="zzz" aria-hidden="true"><b>z</b><b>z</b><b>z</b></span>
+
+        <div class="half half-left">
+          <svg viewBox="0 0 360 280" aria-hidden="true">
+            <defs>
+              <linearGradient id="doughL" x1="20%" y1="0%" x2="80%" y2="100%">
+                <stop offset="0%" stop-color="#FFE7B5" />
+                <stop offset="38%" stop-color="#F6C15F" />
+                <stop offset="100%" stop-color="#E08E34" />
+              </linearGradient>
+              <linearGradient id="foldL" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#F0B15A" />
+                <stop offset="100%" stop-color="#C97A2E" />
+              </linearGradient>
+            </defs>
+            <path class="rim" d="M186 58C118 40 46 92 56 158C66 220 128 246 186 214Z" fill="#D8873A" />
+            <path d="M182 66C120 50 56 98 64 160C72 214 128 238 182 208Z" fill="url(#doughL)" />
+            <path
+              d="M156 96C116 104 102 140 116 174C128 202 164 196 172 164C180 136 176 112 156 96Z"
+              fill="url(#foldL)"
+              opacity="0.55"
+            />
+            <ellipse
+              class="shine"
+              cx="112"
+              cy="112"
+              rx="38"
+              ry="16"
+              transform="rotate(-28 112 112)"
+              fill="#fff"
+              opacity="0.55"
+            />
+            <ellipse cx="96" cy="168" rx="3" ry="2.2" fill="#C9843A" opacity="0.45" />
+            <ellipse cx="132" cy="188" rx="2.4" ry="1.8" fill="#C9843A" opacity="0.35" />
+            <ellipse cx="78" cy="148" rx="2.2" ry="1.6" fill="#E7B56A" opacity="0.7" />
+            <path class="interior" d="M168 86C158 118 162 158 160 196L184 206L184 74Z" fill="#F8E7C4" />
+            <g class="happy">
+              <ellipse cx="118" cy="156" rx="14" ry="8" fill="#F29B8C" opacity="0.55" />
+              <path
+                d="M104 136Q118 150 132 136"
+                fill="none"
+                stroke="#6B3A28"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+              <path
+                d="M108 168Q120 178 134 166"
+                fill="none"
+                stroke="#6B3A28"
+                stroke-width="3.5"
+                stroke-linecap="round"
+              />
+            </g>
+          </svg>
+        </div>
+
+        <div class="half half-right">
+          <svg viewBox="0 0 360 280" aria-hidden="true">
+            <defs>
+              <linearGradient id="doughR" x1="80%" y1="0%" x2="20%" y2="100%">
+                <stop offset="0%" stop-color="#FFE3A6" />
+                <stop offset="40%" stop-color="#F0B456" />
+                <stop offset="100%" stop-color="#D4832E" />
+              </linearGradient>
+              <linearGradient id="foldR" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#E8A64C" />
+                <stop offset="100%" stop-color="#C4752A" />
+              </linearGradient>
+            </defs>
+            <path d="M174 58C242 40 314 92 304 158C294 220 232 246 174 214Z" fill="#D8873A" />
+            <path d="M178 66C240 50 304 98 296 160C288 214 232 238 178 208Z" fill="url(#doughR)" />
+            <path
+              d="M204 96C244 104 258 140 244 174C232 202 196 196 188 164C180 136 184 112 204 96Z"
+              fill="url(#foldR)"
+              opacity="0.55"
+            />
+            <ellipse cx="262" cy="166" rx="3" ry="2.2" fill="#C9843A" opacity="0.4" />
+            <ellipse cx="228" cy="190" rx="2.4" ry="1.8" fill="#C9843A" opacity="0.32" />
+            <ellipse cx="286" cy="150" rx="2.2" ry="1.6" fill="#E7B56A" opacity="0.65" />
+            <path class="interior" d="M192 86C202 118 198 158 200 196L176 206L176 74Z" fill="#F8E7C4" />
+            <g class="happy">
+              <ellipse cx="242" cy="156" rx="14" ry="8" fill="#F29B8C" opacity="0.55" />
+              <path
+                d="M228 136Q242 150 256 136"
+                fill="none"
+                stroke="#6B3A28"
+                stroke-width="4"
+                stroke-linecap="round"
+              />
+              <path
+                d="M226 166Q240 178 252 168"
+                fill="none"
+                stroke="#6B3A28"
+                stroke-width="3.5"
+                stroke-linecap="round"
+              />
+            </g>
+          </svg>
+        </div>
+
+        <svg class="face-layer" viewBox="0 0 360 280" aria-hidden="true">
+          <path
+            class="crease"
+            d="M180 78C174 116 188 150 176 202"
+            fill="none"
+            stroke="#C4844A"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <path
+            class="crack-line"
+            d="M180 72L166 102L194 124L160 150L192 176L170 208"
+            fill="none"
+            stroke="#8A4E2C"
+            stroke-width="3.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <g class="eyes-shut">
+            <path d="M148 132Q162 144 176 132" />
+            <path d="M184 132Q198 144 212 132" />
+          </g>
+          <g class="eyes-awake">
+            <ellipse cx="162" cy="130" rx="9" ry="10" fill="#fff" />
+            <ellipse cx="198" cy="130" rx="9" ry="10" fill="#fff" />
+            <circle class="pupil" cx="162" cy="132" r="4.5" />
+            <circle class="pupil" cx="198" cy="132" r="4.5" />
+            <circle class="pupil-catch" cx="160" cy="129" r="1.6" fill="#fff" />
+            <circle class="pupil-catch" cx="196" cy="129" r="1.6" fill="#fff" />
+          </g>
+          <g class="eyes-wide">
+            <ellipse cx="162" cy="130" rx="11" ry="12.5" fill="#fff" />
+            <ellipse cx="198" cy="130" rx="11" ry="12.5" fill="#fff" />
+            <circle class="pupil" cx="162" cy="133" r="5.2" />
+            <circle class="pupil" cx="198" cy="133" r="5.2" />
+            <circle class="pupil-catch" cx="160" cy="129" r="1.8" fill="#fff" />
+            <circle class="pupil-catch" cx="196" cy="129" r="1.8" fill="#fff" />
+          </g>
+          <path class="mouth mouth-smile" d="M166 160Q180 174 194 160" />
+          <ellipse class="mouth mouth-o" cx="180" cy="164" rx="7" ry="8" />
+          <ellipse cx="124" cy="156" rx="14" ry="8" fill="#F29B8C" opacity="0.5" />
+          <ellipse cx="236" cy="156" rx="14" ry="8" fill="#F29B8C" opacity="0.5" />
+        </svg>
+      </button>
+
+      <div class="burst" #burst aria-hidden="true"></div>
+      <p class="bubble" [class.show]="bubbleOn()" aria-hidden="true">{{ bubble() }}</p>
+      <div class="pips" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+    </section>
+
+    <div class="dock">
+      <p class="hint" aria-live="polite">{{ hint() }}</p>
+      <button class="text-btn" type="button" (click)="onShake()">{{ copy.shake }}</button>
+      <div class="actions" [attr.inert]="phase() === 'open' ? null : ''">
+        <button class="primary" type="button" (click)="closeCookie()">{{ copy.again }}</button>
+        <button class="ghost" type="button" (click)="copyFortune()">{{ copy.copy }}</button>
+      </div>
+    </div>
+  </main>
+
+  <p class="toast" [class.show]="toastOn()" role="status" aria-live="polite">{{ toastText() }}</p>
+} @else if (loadError()) {
+  <p class="load-error">籤文讀不到。請確認 public/fortunes.json 還在。</p>
+} @else {
+  <p class="loading">{{ copy()?.loading || '餅乾還在烤…' }}</p>
+}
